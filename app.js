@@ -1689,6 +1689,18 @@
       if (e.target === globalKModal) globalKModal.classList.add("hidden");
     });
 
+    // About Modal
+    const aboutModal = document.getElementById("aboutModal");
+    document.getElementById("openAboutModalBtn")?.addEventListener("click", () => {
+      aboutModal?.classList.remove("hidden");
+    });
+    document.getElementById("closeAboutModal")?.addEventListener("click", () => {
+      aboutModal?.classList.add("hidden");
+    });
+    aboutModal?.addEventListener("click", (e) => {
+      if (e.target === aboutModal) aboutModal.classList.add("hidden");
+    });
+
     // In-Sim K Overlay close
     document.getElementById("closeInSimKBtn").addEventListener("click", () => {
       document.getElementById("inSimKOverlay").classList.add("hidden");
@@ -1843,6 +1855,7 @@
         if (e.key === "Escape") {
           toggleWalkerOverlay(false);
           globalKModal.classList.add("hidden");
+          aboutModal?.classList.add("hidden");
         }
         return;
       }
@@ -1851,6 +1864,7 @@
         toggleWalkerOverlay(false);
         document.getElementById("inSimKOverlay").classList.add("hidden");
         globalKModal.classList.add("hidden");
+        aboutModal?.classList.add("hidden");
         return;
       }
 

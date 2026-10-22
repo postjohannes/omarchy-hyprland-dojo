@@ -2,6 +2,14 @@
   "name": "omarchy-hyprland-dojo",
   "version": "1.0.0",
   "description": "Interactive tutorial, live Dwindle tiling simulator, and pro-tips dojo for mastering Hyprland in Omarchy.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/postjohannes/omarchy-hyprland-dojo.git"
+  },
+  "homepage": "hhttps://omarchy-hyprland-dojo.netlify.app",
+  "bugs": {
+    "url": "https://github.com/postjohannes/omarchy-hyprland-dojo/issues"
+  },
   "scripts": {
     "start": "npx --yes serve . -l 3000",
     "dev": "npx --yes serve . -l 3000",
@@ -12,7 +20,10 @@
     "hyprland",
     "tiling-window-manager",
     "linux",
-    "tutorial"
+    "arch-linux",
+    "dwindle",
+    "tutorial",
+    "interactive-dojo"
   ],
   "license": "MIT"
 }
