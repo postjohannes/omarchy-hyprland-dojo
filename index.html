@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="tokyo-night">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Omarchy × Hyprland Dojo — From Floating Refugee to Tiling Ninja</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Ambient Background Glow -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-grid"></div>
+  </div>
+
+  <!-- Top App Header / Omarchy Status Bar -->
+  <header class="app-header">
+    <div class="brand-cluster">
+      <div class="omarchy-logo" title="Omarchy × Hyprland Dojo">
+        <span class="logo-glyph">❖</span>
+        <div class="logo-text">
+          <span class="logo-title">OMARCHY<span class="accent-slash">//</span>DOJO</span>
+          <span class="logo-sub">Interactive Hyprland Trainer</span>
+        </div>
+      </div>
+      <div class="rank-pill" id="userRankPill" title="Complete missions and arcade challenges to rank up!">
+        <span class="rank-dot"></span>
+        <span id="rankTitle">Rank: Floating Refugee</span>
+        <span class="xp-badge" id="xpCounter">0 XP</span>
+        <button class="reset-progress-btn" id="resetProgressBtn" title="Reset saved cookie progress, XP, missions, and user options">
+          ↺ Reset
+        </button>
+      </div>
+    </div>
+
+    <nav class="mode-tabs" role="tablist" aria-label="Tutorial Sections">
+      <button class="mode-tab active" data-tab="dojo" role="tab" aria-selected="true">
+        <span class="tab-icon">🥋</span>
+        <span>Interactive Dojo</span>
+      </button>
+      <button class="mode-tab" data-tab="arcade" role="tab" aria-selected="false">
+        <span class="tab-icon">⚡</span>
+        <span>Muscle Memory Arcade</span>
+      </button>
+      <button class="mode-tab" data-tab="protips" role="tab" aria-selected="false">
+        <span class="tab-icon">💎</span>
+        <span>Omarchy Pro Secrets</span>
+      </button>
+      <button class="mode-tab" data-tab="cheatsheet" role="tab" aria-selected="false">
+        <span class="tab-icon">⌨️</span>
+        <span>Cheat Sheet &amp; Config</span>
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <div class="theme-picker-wrap">
+        <label for="themeSelect" class="sr-only">Omarchy Theme</label>
+        <span class="theme-icon" title="Omakase Theme Switcher">🎨</span>
+        <select id="themeSelect" class="theme-select" aria-label="Select Omarchy Color Theme">
+          <optgroup label="🌙 Dark Themes">
+            <option value="tokyo-night">Tokyo Night (Default)</option>
+            <option value="catppuccin">Catppuccin Mocha</option>
+            <option value="gruvbox">Gruvbox Material</option>
+            <option value="rose-pine">Rosé Pine</option>
+            <option value="kanagawa">Kanagawa Wave</option>
+            <option value="everforest">Everforest Dark</option>
+          </optgroup>
+          <optgroup label="☀️ Light Themes">
+            <option value="rose-pine-dawn">Rosé Pine Dawn (Light)</option>
+            <option value="catppuccin-latte">Catppuccin Latte (Light)</option>
+            <option value="tokyo-night-day">Tokyo Night Day (Light)</option>
+            <option value="gruvbox-light">Gruvbox Paper (Light)</option>
+            <option value="everforest-light">Everforest Cream (Light)</option>
+          </optgroup>
+        </select>
+      </div>
+      <button class="panic-btn" id="togglePageFullscreenBtn" title="Make this webapp Fullscreen for an authentic monitor feel">
+        <span>⛶</span>
+        <span id="fullscreenBtnLabel">Go Fullscreen</span>
+      </button>
+      <button class="panic-btn" id="openSuperKBtn" title="Press Super + K — The #1 Omarchy Rule">
+        <kbd>Super</kbd><span>+</span><kbd>K</kbd>
+        <span class="panic-label">Help Overlay</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Fullscreen Suggestion Banner -->
+  <div class="fullscreen-suggestion-banner" id="fullscreenBanner" role="region" aria-label="Fullscreen Recommendation">
+    <div class="fs-banner-content">
+      <span class="fs-badge">💡 IMMERSIVE TIP</span>
+      <span class="fs-text">
+        For the best tiling experience, <strong>make this page Fullscreen</strong> (<kbd>Super</kbd> + <kbd>F</kbd> in Omarchy, <kbd>F11</kbd>, or click the button) so the simulated monitor has maximum room and your browser bars disappear!
+      </span>
+    </div>
+    <div class="fs-banner-actions">
+      <button class="btn-xs fs-cta-btn" id="bannerFullscreenBtn">⛶ Enter Fullscreen Now</button>
+      <button class="btn-xs" id="bannerTheaterBtn" title="Hide/Show lesson panel to make simulator 100% wide">◧ Expand Simulator</button>
+      <button class="fs-dismiss-btn" id="dismissFsBannerBtn" title="Dismiss tip" aria-label="Dismiss tip">✕</button>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 1: INTERACTIVE DOJO ==================== -->
+  <main class="main-container">
+    <section id="tab-dojo" class="tab-panel active">
+      <div class="dojo-layout">
+        <!-- Left Column: Guided Curriculum & Missions -->
+        <aside class="curriculum-panel">
+          <div class="level-selector" id="levelSelector" role="navigation" aria-label="Dojo Levels">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="lesson-card" id="lessonCard">
+            <div class="lesson-header">
+              <span class="lesson-badge" id="lessonBadge">LEVEL 1 OF 5</span>
+              <h1 class="lesson-title" id="lessonTitle">Loading Lesson...</h1>
+            </div>
+
+            <div class="lesson-story" id="lessonStory">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="mental-model-box" id="mentalModelBox">
+              <div class="mm-header">
+                <span class="mm-icon">🧠</span>
+                <span class="mm-title" id="mentalModelTitle">The Hyprland Mental Model</span>
+              </div>
+              <p class="mm-body" id="mentalModelBody"></p>
+            </div>
+
+            <div class="mission-checklist-wrap">
+              <div class="mission-header">
+                <span>🎯 Hands-On Missions (Try in the Simulator!)</span>
+                <span class="mission-progress-text" id="missionProgressText">0/4</span>
+              </div>
+              <ul class="mission-list" id="missionList">
+                <!-- Populated by JS -->
+              </ul>
+            </div>
+
+            <div class="lesson-pro-tip" id="lessonProTip">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="lesson-nav-footer">
+              <button class="btn-secondary" id="prevLevelBtn" disabled>← Previous Level</button>
+              <button class="btn-primary" id="nextLevelBtn">Next Level →</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right Column: Live Hyprland Desktop Simulator -->
+        <section class="simulator-column" aria-label="Interactive Omarchy Hyprland Simulator">
+          <!-- Simulator Control Deck -->
+          <div class="sim-control-bar">
+            <div class="super-latch-group">
+              <button class="super-latch-btn active" id="superLatchBtn" title="When latched, pressing keys like Return, W, J, T, F, O, G, S, 1-5, or Arrows acts as if you're holding the Super key!">
+                <span class="super-led"></span>
+                <span class="super-key-icon">❖ SUPER</span>
+                <span class="super-status" id="superLatchStatus">HELD (AUTO-LATCH ON)</span>
+              </button>
+              <span class="sim-hint">
+                Press keys directly on your keyboard (e.g. <kbd>Enter</kbd>, <kbd>W</kbd>, <kbd>J</kbd>, <kbd>T</kbd>, <kbd>Arrows</kbd>, <kbd>1-5</kbd>) or click the quick actions below!
+              </span>
+            </div>
+            <div class="sim-utility-btns">
+              <button class="btn-xs" id="simTheaterBtn" title="Toggle Wide Theater Mode for the Simulator">◧ Wide Sim</button>
+              <button class="btn-xs" id="simFullscreenMonitorBtn" title="Make the page fullscreen">⛶ Fullscreen</button>
+              <button class="btn-xs" id="resetSimBtn" title="Reset simulator workspace to default state">↺ Reset Desk</button>
+            </div>
+          </div>
+
+          <!-- Simulated Monitor Frame -->
+          <div class="hypr-monitor" id="hyprMonitor" tabindex="0">
+            <!-- Waybar Top Bar -->
+            <div class="waybar">
+              <div class="waybar-left">
+                <button class="waybar-omarchy-btn" id="waybarMenuBtn" title="Super + Space: Open Omarchy Menu">❖</button>
+                <div class="waybar-workspaces" id="waybarWorkspaces">
+                  <button class="ws-pill active" data-ws="1">1</button>
+                  <button class="ws-pill" data-ws="2">2</button>
+                  <button class="ws-pill" data-ws="3">3</button>
+                  <button class="ws-pill" data-ws="4">4</button>
+                  <button class="ws-pill" data-ws="5">5</button>
+                </div>
+                <span class="waybar-layout-indicator" id="waybarLayoutBadge" title="Current Layout Engine">dwindle</span>
+                <span class="waybar-scratchpad-pill hidden" id="waybarScratchpadPill" title="Super + S to toggle hidden scratchpad window">
+                  📦 Scratchpad (1)
+                </span>
+              </div>
+              <div class="waybar-center">
+                <span id="waybarClock">Thu Oct 22  10:48</span>
+              </div>
+              <div class="waybar-right">
+                <span class="wb-module" title="Split direction of next window"> split: <strong id="waybarSplitDir">auto-spiral</strong></span>
+                <span class="wb-module">🔊 78%</span>
+                <span class="wb-module">🛜 arch-wlan</span>
+                <span class="wb-module">🔋 96%</span>
+              </div>
+            </div>
+
+            <!-- Hyprland Tiling Canvas -->
+            <div class="hypr-canvas" id="hyprCanvas">
+              <!-- Tiled windows and floating windows rendered dynamically by JS -->
+            </div>
+
+            <!-- Interactive Walker / Omarchy Launcher Overlay (Super + Space) -->
+            <div class="walker-overlay hidden" id="walkerOverlay">
+              <div class="walker-modal">
+                <div class="walker-search-bar">
+                  <span class="walker-prompt">❖</span>
+                  <input type="text" id="walkerInput" placeholder="Walker: Type to launch app or run Omarchy command..." autocomplete="off" />
+                  <kbd class="esc-hint">Esc</kbd>
+                </div>
+                <div class="walker-results" id="walkerResults">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Super + K Cheat Sheet Overlay inside Monitor -->
+            <div class="in-sim-k-overlay hidden" id="inSimKOverlay">
+              <div class="in-sim-k-card">
+                <div class="in-sim-k-head">
+                  <span>❖ Omarchy Live Keybindings (<kbd>Super</kbd> + <kbd>K</kbd>)</span>
+                  <button class="close-k-btn" id="closeInSimKBtn">✕</button>
+                </div>
+                <div class="in-sim-k-grid">
+                  <div><kbd>Super + Space</kbd> Launcher</div>
+                  <div><kbd>Super + Return</kbd> Terminal</div>
+                  <div><kbd>Super + B</kbd> Browser</div>
+                  <div><kbd>Super + W</kbd> Close Window</div>
+                  <div><kbd>Super + Arrows</kbd> Move Focus</div>
+                  <div><kbd>Super + Shift + Arrows</kbd> Swap Tile</div>
+                  <div><kbd>Super + J</kbd> Flip Split Axis</div>
+                  <div><kbd>Super + T</kbd> Float / Tile</div>
+                  <div><kbd>Super + F</kbd> Fullscreen</div>
+                  <div><kbd>Super + O</kbd> Pop &amp; Pin (Sticky)</div>
+                  <div><kbd>Super + G</kbd> Group Windows</div>
+                  <div><kbd>Super + S</kbd> Toggle Scratchpad</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Keypress OSD Toast -->
+            <div class="key-osd" id="keyOsd" aria-live="polite">
+              <span class="osd-keys" id="osdKeys"><kbd>Super</kbd> + <kbd>Return</kbd></span>
+              <span class="osd-action" id="osdAction">Spawn Terminal (Ghostty)</span>
+            </div>
+          </div>
+
+          <!-- Tactile Interactive Deck (Click to trigger any shortcut!) -->
+          <div class="tactile-deck">
+            <div class="deck-group">
+              <span class="deck-group-label">Spawn &amp; Close</span>
+              <div class="deck-buttons">
+                <button class="key-btn" data-cmd="spawn-term" title="Super + Return: Open Terminal">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>⏎ Return</kbd></div>
+                  <span class="key-desc">+ Terminal</span>
+                </button>
+                <button class="key-btn" data-cmd="spawn-browser" title="Super + B: Open Browser">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>B</kbd></div>
+                  <span class="key-desc">+ Browser</span>
+                </button>
+                <button class="key-btn" data-cmd="spawn-editor" title="Open Neovim / Code">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>N</kbd></div>
+                  <span class="key-desc">+ Neovim</span>
+                </button>
+                <button class="key-btn" data-cmd="launcher" title="Super + Space: Open Walker Launcher">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>Space</kbd></div>
+                  <span class="key-desc">Launcher</span>
+                </button>
+                <button class="key-btn danger-hover" data-cmd="close-win" title="Super + W: Close Active Window">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>W</kbd></div>
+                  <span class="key-desc">Close Win</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="deck-group">
+              <span class="deck-group-label">Dwindle &amp; States</span>
+              <div class="deck-buttons">
+                <button class="key-btn" data-cmd="toggle-split" title="Super + J: Toggle Horizontal/Vertical Split">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>J</kbd></div>
+                  <span class="key-desc">Flip Split ⬌⬍</span>
+                </button>
+                <button class="key-btn" data-cmd="toggle-float" title="Super + T: Toggle Floating vs Tiling">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>T</kbd></div>
+                  <span class="key-desc">Float / Tile</span>
+                </button>
+                <button class="key-btn" data-cmd="toggle-fullscreen" title="Super + F: Toggle Fullscreen">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>F</kbd></div>
+                  <span class="key-desc">Fullscreen</span>
+                </button>
+                <button class="key-btn" data-cmd="pop-pin" title="Super + O: Pop out &amp; Pin across workspaces">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>O</kbd></div>
+                  <span class="key-desc">Pop &amp; Pin 📌</span>
+                </button>
+                <button class="key-btn" data-cmd="toggle-group" title="Super + G: Group into Tabbed Tile">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>G</kbd></div>
+                  <span class="key-desc">Tab Group 🗂️</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="deck-group">
+              <span class="deck-group-label">Focus, Swap &amp; Scratchpad</span>
+              <div class="deck-buttons">
+                <button class="key-btn" data-cmd="focus-next" title="Super + Arrows: Move Window Focus">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>←↓↑→</kbd></div>
+                  <span class="key-desc">Cycle Focus</span>
+                </button>
+                <button class="key-btn" data-cmd="swap-next" title="Super + Shift + Arrows: Swap Focused Window">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>⇧</kbd><kbd>←→</kbd></div>
+                  <span class="key-desc">Swap Tile</span>
+                </button>
+                <button class="key-btn" data-cmd="grow-win" title="Super + =: Grow Active Window">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>=</kbd></div>
+                  <span class="key-desc">Grow +</span>
+                </button>
+                <button class="key-btn" data-cmd="shrink-win" title="Super + -: Shrink Active Window">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>-</kbd></div>
+                  <span class="key-desc">Shrink −</span>
+                </button>
+                <button class="key-btn" data-cmd="move-scratchpad" title="Super + Alt + S: Send to Scratchpad">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>Alt</kbd><kbd>S</kbd></div>
+                  <span class="key-desc">Stash 📦</span>
+                </button>
+                <button class="key-btn" data-cmd="toggle-scratchpad" title="Super + S: Summon/Hide Scratchpad">
+                  <div class="keycap-combo"><kbd>Super</kbd><kbd>S</kbd></div>
+                  <span class="key-desc">Peek 📦</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: MUSCLE MEMORY ARCADE ==================== -->
+    <section id="tab-arcade" class="tab-panel">
+      <div class="arcade-wrapper">
+        <div class="arcade-header-card">
+          <div>
+            <span class="section-eyebrow">GAMIFIED REFLEX TRAINER</span>
+            <h2>⚡ Omarchy Muscle Memory Arcade</h2>
+            <p>Stop thinking about keybinds and wire them directly into your fingers. Read the real-world Hyprland scenario and hit (or click) the exact Omarchy shortcut before the timer runs out!</p>
+          </div>
+          <div class="arcade-stats">
+            <div class="stat-box">
+              <span class="stat-label">CURRENT STREAK</span>
+              <span class="stat-val" id="arcadeStreak">0 🔥</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">BEST STREAK</span>
+              <span class="stat-val" id="arcadeBestStreak">0 🏆</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">SCORE</span>
+              <span class="stat-val" id="arcadeScore">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="arcade-stage" id="arcadeStage">
+          <div class="arcade-timer-bar">
+            <div class="arcade-timer-fill" id="arcadeTimerFill"></div>
+          </div>
+
+          <div class="arcade-prompt-box">
+            <span class="scenario-tag" id="arcadeCategoryTag">SCENARIO #1</span>
+            <h3 class="scenario-question" id="arcadeQuestion">
+              You just opened a 3rd terminal, and it split vertically into a skinny noodle column instead of horizontally. Which shortcut flips the split orientation?
+            </h3>
+            <p class="scenario-hint" id="arcadeHint">Hint: Think of the letter right below H/K on the home row...</p>
+          </div>
+
+          <div class="arcade-options-grid" id="arcadeOptionsGrid">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="arcade-feedback hidden" id="arcadeFeedback">
+            <div class="feedback-text" id="arcadeFeedbackText"></div>
+            <button class="btn-primary" id="nextArcadeQuestionBtn">Next Scenario →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: OMARCHY PRO SECRETS ==================== -->
+    <section id="tab-protips" class="tab-panel">
+      <div class="protips-container">
+        <div class="section-intro">
+          <span class="section-eyebrow">BEYOND THE BASICS</span>
+          <h2>💎 8 Omarchy &amp; Hyprland Pro Secrets That Change Everything</h2>
+          <p>Most people struggle with Hyprland because they try to use it like macOS or Windows (stacking 12 windows on one desktop and hunting for a minimize button). Here are the workflow secrets that make Omarchy feel effortless.</p>
+        </div>
+
+        <div class="protips-grid" id="protipsGrid">
+          <!-- Populated by JS with interactive visual demos -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: CHEAT SHEET & CONFIG BUILDER ==================== -->
+    <section id="tab-cheatsheet" class="tab-panel">
+      <div class="cheatsheet-layout">
+        <div class="cheatsheet-column">
+          <div class="cs-header">
+            <div>
+              <span class="section-eyebrow">INSTANT REFERENCE</span>
+              <h2>⌨️ Interactive Omarchy Keybinding Directory</h2>
+            </div>
+            <div class="cs-search-wrap">
+              <input type="search" id="csSearchInput" placeholder="Filter by action or key (e.g. 'float', 'workspace', 'scratchpad', 'Super + O')..." />
+            </div>
+          </div>
+
+          <div class="cs-filter-pills" id="csCategoryPills">
+            <button class="filter-pill active" data-cat="all">All Binds</button>
+            <button class="filter-pill" data-cat="essentials">Ten Essentials</button>
+            <button class="filter-pill" data-cat="tiling">Tiling &amp; Layout</button>
+            <button class="filter-pill" data-cat="workspaces">Workspaces</button>
+            <button class="filter-pill" data-cat="advanced">Pro &amp; Scratchpad</button>
+            <button class="filter-pill" data-cat="system">System &amp; Themes</button>
+          </div>
+
+          <div class="cs-table-wrap" id="csListContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Custom ~/.config/hypr/bindings.conf Generator -->
+        <aside class="config-builder-column">
+          <div class="config-card">
+            <span class="section-eyebrow">SAFE CUSTOMIZATION</span>
+            <h3>🛠️ `~/.config/hypr/bindings.conf` Builder</h3>
+            <p class="config-desc">
+              In Omarchy, you should <strong>never</strong> edit the core system defaults directly (or an Omarchy update might overwrite them). Instead, add your personal tweaks to <code>~/.config/hypr/bindings.conf</code>! Toggle any popular quality-of-life upgrades below:
+            </p>
+
+            <div class="config-toggles" id="configToggles">
+              <label class="cfg-toggle-item">
+                <input type="checkbox" value="vim_nav" checked />
+                <div>
+                  <strong>Vim-Style Navigation (H/J/K/L)</strong>
+                  <span>Add <code>Super + Ctrl + H/J/K/L</code> for focus so you never reach for arrow keys</span>
+                </div>
+              </label>
+              <label class="cfg-toggle-item">
+                <input type="checkbox" value="zen_mode" checked />
+                <div>
+                  <strong>Distraction-Free Zen Mode Gap Toggle</strong>
+                  <span>Press <code>Super + Z</code> to toggle zero gaps &amp; hide Waybar for deep coding</span>
+                </div>
+              </label>
+              <label class="cfg-toggle-item">
+                <input type="checkbox" value="center_float" checked />
+                <div>
+                  <strong>Float &amp; Center @ 70% Size</strong>
+                  <span>Make <code>Super + Alt + T</code> float the active window AND resize it cleanly in the center</span>
+                </div>
+              </label>
+              <label class="cfg-toggle-item">
+                <input type="checkbox" value="swap_master" />
+                <div>
+                  <strong>Quick Swap with Largest Window</strong>
+                  <span>Press <code>Super + M</code> to promote the focused small tile to the main half of the screen</span>
+                </div>
+              </label>
+              <label class="cfg-toggle-item">
+                <input type="checkbox" value="webapps" />
+                <div>
+                  <strong>Custom Omarchy Web App Launchers</strong>
+                  <span>Bind <code>Super + Shift + G</code> for GitHub &amp; <code>Super + Shift + A</code> for ChatGPT/Claude</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="code-output-wrap">
+              <div class="code-output-head">
+                <span>~/.config/hypr/bindings.conf</span>
+                <button class="btn-xs" id="copyConfigBtn">📋 Copy Snippet</button>
+              </div>
+              <pre class="config-code" id="generatedConfigCode"></pre>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- Global Super + K Modal Overlay -->
+  <div class="global-modal-backdrop hidden" id="globalKModal">
+    <div class="global-k-dialog">
+      <div class="global-k-header">
+        <div>
+          <span class="section-eyebrow">OMARCHY SURVIVAL GUIDE</span>
+          <h3>❖ The <kbd>Super</kbd> + <kbd>K</kbd> Master Cheat Sheet</h3>
+        </div>
+        <button class="modal-close-btn" id="closeGlobalKModal">Esc / ✕</button>
+      </div>
+      <p class="global-k-sub">
+        DHH's #1 rule for Omarchy: <em>"Don't memorize a giant list of shortcuts. Just remember <code>Super + K</code>."</em> Here are the keybinds you'll use 95% of the time:
+      </p>
+      <div class="global-k-columns" id="globalKColumns">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "omarchy-hyprland-dojo",
+  "version": "1.0.0",
+  "description": "Interactive tutorial, live Dwindle tiling simulator, and pro-tips dojo for mastering Hyprland in Omarchy.",
+  "scripts": {
+    "start": "npx --yes serve . -l 3000",
+    "dev": "npx --yes serve . -l 3000",
+    "build": "echo 'Static bundle ready for Netlify deployment'"
+  },
+  "keywords": [
+    "omarchy",
+    "hyprland",
+    "tiling-window-manager",
+    "linux",
+    "tutorial"
+  ],
+  "license": "MIT"
+}
